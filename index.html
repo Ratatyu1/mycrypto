@@ -145,11 +145,14 @@
 
     /* ── PARTNERS ── */
     .section-bg{background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .3s}
-    .partners-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .partners-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    @media(max-width:900px){.partners-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:580px){.partners-grid{grid-template-columns:1fr}}
     .partner-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:16px;transition:border-color .2s,transform .2s}
     .partner-card:hover{border-color:var(--accent);transform:translateY(-2px)}
     .partner-logo-wrap{display:flex;align-items:center;gap:12px}
-    .partner-logo-wrap svg{flex-shrink:0;border-radius:12px}
+    .partner-logo-wrap svg,.partner-logo-wrap .p-ico{flex-shrink:0;border-radius:12px}
+    .p-ico{width:48px;height:48px;object-fit:contain;background:#fff;padding:6px}
     .partner-name{font-family:var(--h-font);font-size:22px;font-weight:800;color:var(--text)}
     .partner-logo{font-family:var(--h-font);font-size:22px;font-weight:800;color:var(--accent)}
     .partner-desc{font-size:14px;color:var(--text-2);line-height:1.65;flex:1}
@@ -172,8 +175,10 @@
     footer{background:var(--surf);border-top:1px solid var(--border);padding:40px 24px 28px;transition:background .3s}
     .footer-in{max-width:var(--max-w);margin:0 auto}
     .footer-links{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-    .footer-a{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-2);padding:8px 16px;background:var(--surf-2);border:1px solid var(--border);border-radius:8px;transition:color .2s,border-color .2s}
+    .footer-a{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--text-2);padding:8px 16px;background:var(--surf-2);border:1px solid var(--border);border-radius:8px;transition:color .2s,border-color .2s}
     .footer-a:hover{color:var(--text);border-color:var(--accent)}
+    .footer-a img{width:18px;height:18px;object-fit:contain;filter:var(--icon-filter,none);flex-shrink:0}
+    [data-theme="dark"] .footer-a img.invert-icon{filter:invert(1) brightness(1.5)}
     .footer-copy{font-size:12px;color:var(--text-3);line-height:1.6}
 
     /* ── MODAL ── */
@@ -230,7 +235,7 @@
     <nav class="main-nav">
       <a href="#prices">Курсы</a>
       <a href="#converter">Конвертер</a>
-      <a href="#exchanges">Биржи</a>
+      <a href="#exchanges">Инструменты</a>
     </nav>
     <button class="theme-tog" id="themeToggle" title="Переключить тему">🌙</button>
     <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
@@ -240,7 +245,7 @@
   <nav class="mobile-nav" id="mobileNav">
     <a href="#prices">Курсы</a>
     <a href="#converter">Конвертер</a>
-    <a href="#exchanges">Биржи</a>
+    <a href="#exchanges">Инструменты</a>
   </nav>
 </header>
 
@@ -326,7 +331,7 @@
     </div>
 
     <div class="buy-wrap">
-      <a class="buy-btn" href="https://exchange.whitebird.io/?refid=hTwY4wL8" target="_blank" rel="noopener">
+      <a class="buy-btn" id="buyBtn" href="https://exchange.whitebird.io/?refid=hTwY4wL8" target="_blank" rel="noopener">
         Купить криптовалюту →
       </a>
     </div>
@@ -336,20 +341,11 @@
 <!-- БИРЖИ -->
 <div class="section-bg" id="exchanges">
   <div class="section">
-    <h2 class="section-title" style="margin-bottom:28px">Биржи</h2>
+    <h2 class="section-title" style="margin-bottom:28px">Инструменты</h2>
     <div class="partners-grid">
       <div class="partner-card">
         <div class="partner-logo-wrap">
-          <!-- Whitebird: синий фон, белая птица смотрит вправо, голубой акцент крыла -->
-          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="56" height="56" rx="12" fill="#0077FF"/>
-            <path d="M22 30 Q34 21 47 29 Q44 38 30 40 Q20 39 18 33 Z" fill="#6DB8FF"/>
-            <path d="M16 33 Q19 22 32 23 Q44 25 43 36 Q36 46 22 43 Q12 40 16 33 Z" fill="white"/>
-            <circle cx="20" cy="22" r="10" fill="white"/>
-            <path d="M11 22 L4 19 L11 26 Z" fill="white"/>
-            <circle cx="16" cy="19" r="3.2" fill="#0077FF"/>
-            <circle cx="17" cy="18" r="1.1" fill="white"/>
-          </svg>
+          <img class="p-ico" src="https://exchange.whitebird.io/favicon.ico" alt="Whitebird" width="48" height="48" />
           <span class="partner-name">Whitebird</span>
         </div>
         <p class="partner-desc">Белорусская P2P-биржа, регулируется ПВТ. Низкие комиссии, BYN-поддержка. Работает официально — можно пополнить с белорусской карты.</p>
@@ -357,15 +353,15 @@
       </div>
       <div class="partner-card">
         <div class="partner-logo-wrap">
-          <!-- Hash Hedge: тёмный фон, золотой ромб + две стрелки ↑↑ внутри -->
-          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="56" height="56" rx="12" fill="#13111A"/>
-            <path d="M28 5 L51 28 L28 51 L5 28 Z" stroke="#F5C518" stroke-width="5" stroke-linejoin="miter"/>
-            <line x1="19" y1="43" x2="19" y2="27" stroke="#F5C518" stroke-width="4.5" stroke-linecap="butt"/>
-            <path d="M11 35 L19 20 L27 35" stroke="#F5C518" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <line x1="37" y1="43" x2="37" y2="27" stroke="#F5C518" stroke-width="4.5" stroke-linecap="butt"/>
-            <path d="M29 35 L37 20 L45 35" stroke="#F5C518" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img class="p-ico" src="https://www.bybit.com/favicon.ico" alt="Bybit" width="48" height="48" />
+          <span class="partner-name">Bybit</span>
+        </div>
+        <p class="partner-desc">Международная биржа с низкими комиссиями. Фьючерсы, спот, копитрейдинг. Бонус за регистрацию.</p>
+        <a class="partner-btn" href="https://www.bybit.com/invite?ref=12DR7D5" target="_blank" rel="noopener">Перейти →</a>
+      </div>
+      <div class="partner-card">
+        <div class="partner-logo-wrap">
+          <img class="p-ico" src="https://hashhedge.com/favicon.ico" alt="Hash Hedge" width="48" height="48" />
           <span class="partner-name">Hash Hedge</span>
         </div>
         <p class="partner-desc">Профессиональный сервис управления капиталом. Фьючерсы BTC/ETH, риск-менеджмент. Для тех, кто хочет торговать серьёзно.</p>
@@ -385,11 +381,11 @@
 <footer>
   <div class="footer-in">
     <div class="footer-links">
-      <a class="footer-a" href="https://t.me/mycryptoby" target="_blank" rel="noopener">✈ Telegram</a>
-      <a class="footer-a" href="https://instagram.com/mycryptoby" target="_blank" rel="noopener">📷 Instagram</a>
-      <a class="footer-a" href="https://t.me/mycryptosupport" target="_blank" rel="noopener">💬 Поддержка</a>
+      <a class="footer-a" href="https://t.me/mycryptoby" target="_blank" rel="noopener"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" /> Telegram</a>
+      <a class="footer-a" href="https://instagram.com/mycryptoby" target="_blank" rel="noopener"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" /> Instagram</a>
+      <a class="footer-a" href="https://t.me/mycryptosupport" target="_blank" rel="noopener"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Поддержка" /> Поддержка</a>
     </div>
-    <p class="footer-copy">© 2026 MyCrypto.by · Данные предоставлены Binance API · Не является финансовой консультацией</p>
+    <p class="footer-copy">© 2026 MyCrypto.by · Данные предоставлены Binance API · MyCrypto.by является информационным сервисом и не предоставляет финансовые услуги. Мы не храним ваши средства и не выступаем посредниками в сделках. Все операции совершаются на сайтах наших партнёров-бирж. Инвестиции в криптовалюты сопряжены с высоким риском. Не является финансовой консультацией или призывом к действию.</p>
   </div>
 </footer>
 
@@ -685,6 +681,39 @@ function renderTicker() {
 }
 
 /* ══ CONVERTER ══ */
+const FIAT_SET   = new Set(['USD','BYN','EUR','RUB']);
+const CRYPTO_SET = new Set(['BTC','ETH','SOL','XRP','BNB','TON','HYPE','USDT','USDC']);
+
+const CRYPTO_CHIPS = {
+  BTC:  [['0.01','0.01'],['0.1','0.1'],['0.5','0.5'],['1','1']],
+  ETH:  [['0.1','0.1'],['0.5','0.5'],['1','1'],['5','5']],
+  SOL:  [['1','1'],['5','5'],['10','10'],['50','50']],
+  BNB:  [['1','1'],['5','5'],['10','10'],['50','50']],
+  XRP:  [['10','10'],['50','50'],['100','100'],['500','500']],
+  TON:  [['10','10'],['50','50'],['100','100'],['500','500']],
+  HYPE: [['1','1'],['5','5'],['10','10'],['50','50']],
+  USDT: [['100','100'],['500','500'],['1 000','1000'],['5 000','5000']],
+  USDC: [['100','100'],['500','500'],['1 000','1000'],['5 000','5000']],
+};
+const FIAT_CHIPS = [['100','100'],['500','500'],['1 000','1000'],['5 000','5000'],['10 000','10000']];
+
+function updateChips() {
+  const fSym = document.getElementById('fromSel').value;
+  const chipsEl = document.getElementById('fromChips');
+  const vals = CRYPTO_CHIPS[fSym] || FIAT_CHIPS;
+  chipsEl.innerHTML = vals.map(([label, val]) =>
+    `<button class="chip" data-val="${val}">${label}</button>`).join('');
+}
+
+function updateBuyBtn() {
+  const fSym = document.getElementById('fromSel').value;
+  const tSym = document.getElementById('toSel').value;
+  const btn  = document.getElementById('buyBtn');
+  if (!btn) return;
+  const selling = CRYPTO_SET.has(fSym) && FIAT_SET.has(tSym);
+  btn.textContent = selling ? 'Продать / обменять →' : 'Купить криптовалюту →';
+}
+
 function getRate(sym) {
   if (sym==='BYN') return 1/FX.BYN;
   if (sym==='EUR') return 1/FX.EUR;
@@ -741,11 +770,11 @@ function calcConv() {
   } else {
     out.value=''; prevOut=0;
   }
-  updateRate(); updateIcons();
+  updateRate(); updateIcons(); updateBuyBtn();
 }
 
 document.getElementById('fromInput').addEventListener('input', calcConv);
-document.getElementById('fromSel').addEventListener('change', calcConv);
+document.getElementById('fromSel').addEventListener('change', () => { updateChips(); calcConv(); });
 document.getElementById('toSel').addEventListener('change', calcConv);
 
 document.getElementById('fromChips').addEventListener('click', e => {
@@ -777,7 +806,7 @@ document.getElementById('rateRefresh').addEventListener('click', async () => {
   setTimeout(()=>btn.classList.remove('spin'), 500);
 });
 
-updateIcons();
+updateIcons(); updateChips(); updateBuyBtn();
 
 /* ══ MODAL ══ */
 let mChart = null;
