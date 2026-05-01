@@ -145,7 +145,7 @@
     .err-retry:hover{text-decoration:underline}
 
     /* ── CONVERTER ── */
-    .conv-card{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;box-shadow:var(--shadow)}
+    /* conv-card defined in CONVERTER LAYOUT block above */
     .conv-row{display:flex;flex-direction:column;gap:8px}
     .conv-lbl{font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px}
     .conv-field{display:flex;align-items:center;background:var(--surf-2);border:1.5px solid var(--border);border-radius:14px;padding:0 14px;height:60px;gap:10px;transition:border-color .2s,box-shadow .2s}
@@ -170,6 +170,39 @@
     .buy-wrap{margin-top:24px}
     .buy-btn{display:block;width:100%;padding:14px;background:var(--accent);color:#000;font-family:var(--h-font);font-size:15px;font-weight:800;border-radius:50px;text-align:center;border:none;cursor:pointer;transition:opacity .15s,transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(245,197,24,.25)}
     .buy-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 28px rgba(245,197,24,.4)}
+
+    /* ── CONVERTER LAYOUT ── */
+    .conv-news-wrap{display:grid;grid-template-columns:500px 1fr;gap:40px;align-items:start}
+    @media(max-width:1100px){.conv-news-wrap{grid-template-columns:1fr}}
+    .conv-card{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow)}
+
+    /* ── NEWS ── */
+    .news-list{display:flex;flex-direction:column;gap:14px}
+    .news-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+    .news-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 28px rgba(245,197,24,.12)}
+    .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .news-badge{font-size:10px;font-weight:700;color:#000;background:var(--accent);border-radius:4px;padding:2px 7px;letter-spacing:.5px;text-transform:uppercase}
+    .news-date{font-size:12px;color:var(--text-3)}
+    .news-title{font-family:var(--h-font);font-size:15px;font-weight:700;color:var(--text);margin-bottom:7px;line-height:1.4}
+    .news-preview{font-size:13px;color:var(--text-2);line-height:1.65}
+    .news-read{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--accent);margin-top:10px}
+
+    /* ── ARTICLE MODAL ── */
+    .art-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1001;opacity:0;pointer-events:none;transition:opacity .25s;padding:16px}
+    .art-modal-ov.open{opacity:1;pointer-events:all}
+    .art-modal-box{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;position:relative;transform:translateY(16px) scale(.97);transition:transform .25s}
+    .art-modal-ov.open .art-modal-box{transform:none}
+    .art-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--surf-2);border:1px solid var(--border);color:var(--text-2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;flex-shrink:0}
+    .art-modal-close:hover{background:var(--border);color:var(--text)}
+    .art-modal-date{font-size:12px;color:var(--text-3);margin-bottom:12px}
+    .art-modal-title{font-family:var(--h-font);font-size:20px;font-weight:800;color:var(--text);margin-bottom:20px;line-height:1.35;padding-right:32px}
+    .art-modal-body{font-size:14px;color:var(--text-2);line-height:1.75}
+    .art-modal-body h3{font-family:var(--h-font);font-size:15px;font-weight:700;color:var(--text);margin:18px 0 8px}
+    .art-modal-body ul{padding-left:18px;margin:6px 0}
+    .art-modal-body li{margin-bottom:4px}
+    .art-modal-body a{color:var(--accent);word-break:break-all}
+    .art-modal-body a:hover{text-decoration:underline}
+    .art-src{font-size:11px;color:var(--text-3);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
 
     /* ── PARTNERS ── */
     .section-bg{background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .3s}
@@ -294,8 +327,10 @@
   <div class="small-row" id="smallRow"></div>
 </section>
 
-<!-- CONVERTER -->
+<!-- CONVERTER + NEWS -->
 <section class="section" id="converter" style="padding-top:0">
+  <div class="conv-news-wrap">
+  <div class="conv-side">
   <h2 class="section-title" style="margin-bottom:24px">Конвертер</h2>
   <div class="conv-card">
     <div class="conv-row">
@@ -364,8 +399,44 @@
         Купить криптовалюту →
       </a>
     </div>
-  </div>
+  </div><!-- /conv-card -->
+  </div><!-- /conv-side -->
+
+  <div class="news-side">
+    <h2 class="section-title" style="margin-bottom:24px">Актуальное</h2>
+    <div class="news-list">
+      <div class="news-card" onclick="openArticle(0)">
+        <div class="news-meta">
+          <span class="news-badge">Новость</span>
+          <span class="news-date">23 апр 2026</span>
+        </div>
+        <div class="news-title">Криптобанки в Беларуси: 26 валют и 11 операций</div>
+        <p class="news-preview">Нацбанк утвердил перечень криптовалют и операций для будущих криптобанков. BTC, ETH, TON, SOL, стейблкоины...</p>
+        <span class="news-read">Читать далее →</span>
+      </div>
+      <div class="news-card" onclick="openArticle(1)">
+        <div class="news-meta">
+          <span class="news-badge">Закон</span>
+          <span class="news-date">21 дек 2017</span>
+        </div>
+        <div class="news-title">Декрет №8: что можно и нельзя с криптой</div>
+        <p class="news-preview">С 2018 года в Беларуси легально: майнинг, покупка, продажа. Но криптой нельзя платить за товары...</p>
+        <span class="news-read">Читать далее →</span>
+      </div>
+    </div>
+  </div><!-- /news-side -->
+  </div><!-- /conv-news-wrap -->
 </section>
+
+<!-- ARTICLE MODAL -->
+<div class="art-modal-ov" id="artModal">
+  <div class="art-modal-box">
+    <button class="art-modal-close" id="artModalClose">✕</button>
+    <div class="art-modal-date" id="artDate"></div>
+    <div class="art-modal-title" id="artTitle"></div>
+    <div class="art-modal-body" id="artBody"></div>
+  </div>
+</div>
 
 <!-- БИРЖИ -->
 <div class="section-bg" id="exchanges">
@@ -374,7 +445,7 @@
     <div class="partners-grid">
       <div class="partner-card">
         <div class="partner-logo-wrap">
-          <img class="p-ico" src="whitebird_logo.svg" alt="Whitebird" width="48" height="48" style="background:none;padding:0" />
+          <img class="p-ico" src="whitebird_io_logo.jfif" alt="Whitebird" width="48" height="48" style="background:none;padding:0;border-radius:50%" />
           <span class="partner-name">Whitebird</span>
         </div>
         <p class="partner-desc">Белорусская P2P-биржа, регулируется ПВТ. Низкие комиссии, BYN-поддержка. Работает официально — можно пополнить с белорусской карты.</p>
@@ -382,7 +453,7 @@
       </div>
       <div class="partner-card">
         <div class="partner-logo-wrap">
-          <img class="p-ico" src="bybit_logo.svg" alt="Bybit" width="48" height="48" style="background:none;padding:0" />
+          <img class="p-ico" src="bybit_logo.png" alt="Bybit" width="48" height="48" style="background:none;padding:0;border-radius:50%" />
           <span class="partner-name">Bybit</span>
         </div>
         <p class="partner-desc">Международная биржа с низкими комиссиями. Фьючерсы, спот, копитрейдинг. Бонус за регистрацию.</p>
@@ -895,7 +966,7 @@ async function loadMChart(sym, bkey, isUp) {
 }
 document.getElementById('modalClose').addEventListener('click', closeModal);
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+/* Escape handled in ARTICLES block below */
 
 /* ══ CURRENCY SEG ══ */
 document.getElementById('currSeg').addEventListener('click', e=>{
@@ -959,6 +1030,62 @@ function toggleFaq(i){
   document.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open'));
   if(!was) el.classList.add('open');
 }
+
+/* ══ ARTICLES ══ */
+const ARTICLES = [
+  {
+    date: '23 апреля 2026',
+    title: 'Криптобанки в Беларуси: 26 валют и 11 операций',
+    body: `<p>23 апреля 2026 года Нацбанк и ПВТ утвердили перечень для будущих криптобанков.</p>
+<h3>26 криптовалют:</h3>
+<p>Bitcoin (BTC), Ethereum (ETH), Toncoin (TON), Solana (SOL) + стейблкоины и другие популярные активы.</p>
+<h3>11 операций:</h3>
+<ul>
+<li>Криптовклады и криптозаймы</li>
+<li>Залог криптовалюты</li>
+<li>Стейкинг</li>
+<li>Трансфер между физ/юрлицами</li>
+<li>Выпуск собственных токенов</li>
+<li>Обмен и хранение</li>
+</ul>
+<p>Первый криптобанк планирует запустить Whitebird. Это будет первая в СНГ банковская структура с полноценным балансом фиата и крипты.</p>
+<div class="art-src">Источник: <a href="https://belta.by/economics/view/kriptobanki-belarusi-budut-ispolzovat-26-valjut-i-provodit-11-operatsij-kakie-imenno-776879-2026/" target="_blank" rel="noopener">belta.by</a></div>`,
+  },
+  {
+    date: '21 декабря 2017',
+    title: 'Декрет №8: что можно и нельзя с криптой',
+    body: `<p>21 декабря 2017 года Президент подписал Декрет №8 «О развитии цифровой экономики». Вступил в силу 28 марта 2018 года. Беларусь стала первой страной в мире, легализовавшей смарт-контракты и криптовалюты.</p>
+<h3>Что можно:</h3>
+<ul>
+<li>Майнинг (добыча криптовалюты)</li>
+<li>Покупка и продажа через резидентов ПВТ</li>
+<li>Обмен криптовалюты на фиат</li>
+<li>ICO (выпуск собственных токенов)</li>
+</ul>
+<h3>Что нельзя:</h3>
+<ul>
+<li>Платить криптой за товары и услуги в Беларуси (только фиат)</li>
+<li>Работать с криптой без лицензии ПВТ (для юрлиц)</li>
+</ul>
+<p>Налоги: физлица до 2025 года не платили налог на операции с криптой. С 2025 года возможны изменения.</p>
+<div class="art-src">Источник: <a href="https://president.gov.by/ru/documents/dekret-8-ot-21-dekabrja-2017-g-17716" target="_blank" rel="noopener">president.gov.by</a></div>`,
+  },
+];
+function openArticle(i) {
+  const a = ARTICLES[i]; if (!a) return;
+  document.getElementById('artDate').textContent = a.date;
+  document.getElementById('artTitle').textContent = a.title;
+  document.getElementById('artBody').innerHTML = a.body;
+  document.getElementById('artModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeArticle() {
+  document.getElementById('artModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('artModalClose').addEventListener('click', closeArticle);
+document.getElementById('artModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeArticle(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeArticle(); } });
 
 /* ══ INIT ══ */
 async function init() {
