@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="100" fill="#1A7FFF"/>
+  <!-- light blue cheek / shadow area -->
+  <path d="M 50 152 Q 68 118 105 108 Q 136 100 155 116 Q 140 165 100 170 Q 64 172 50 152 Z" fill="#7DBEFF"/>
+  <!-- main bird head + body (white) -->
+  <path d="M 44 160 Q 38 122 50 88 Q 68 50 108 50 Q 152 50 162 88 Q 170 120 150 140 Q 124 162 80 166 Q 56 167 44 160 Z" fill="white"/>
+  <!-- beak -->
+  <path d="M 162 88 Q 196 80 190 100 Q 184 118 162 110 Z" fill="white"/>
+  <!-- dark eye -->
+  <circle cx="128" cy="79" r="11" fill="#1460CC"/>
+  <!-- eye highlight -->
+  <circle cx="132" cy="75" r="4" fill="white"/>
+</svg>

@@ -47,20 +47,40 @@
 
     /* ── TICKER (full-width) ── */
     .ticker-outer{
-      width:100%;background:var(--surf);border-bottom:1px solid var(--border);
-      height:44px;overflow:hidden;display:flex;align-items:center;
+      width:100%;background:var(--surf);
+      border-top:2px solid var(--accent);
+      border-bottom:1px solid var(--border);
+      height:48px;overflow:hidden;display:flex;align-items:center;
       position:relative;user-select:none;cursor:grab;
       transition:background .3s,border-color .3s;
     }
+    .ticker-outer::before,.ticker-outer::after{
+      content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;
+    }
+    .ticker-outer::before{left:80px;background:linear-gradient(to right,var(--surf),transparent)}
+    .ticker-outer::after{right:0;background:linear-gradient(to left,var(--surf),transparent)}
+    .ticker-live{
+      display:flex;align-items:center;gap:7px;padding:0 16px;
+      font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.8px;
+      text-transform:uppercase;white-space:nowrap;flex-shrink:0;z-index:3;
+      border-right:1px solid var(--border);height:48px;background:var(--surf);
+    }
+    .ticker-live-dot{
+      width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;
+      box-shadow:0 0 6px 2px color-mix(in srgb,var(--accent) 60%,transparent);
+      animation:pulse-dot 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
     .ticker-outer.dragging{cursor:grabbing}
     .ticker-placeholder{position:absolute;left:50%;transform:translateX(-50%);font-size:13px;color:var(--text-2);pointer-events:none}
     .ticker-track{display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;flex-shrink:0}
-    .ticker-item{display:inline-flex;align-items:center;gap:6px;padding:0 20px;font-size:13px;font-feature-settings:"tnum";border-right:1px solid var(--border);height:44px;transition:background .15s}
+    .ticker-item{display:inline-flex;align-items:center;gap:7px;padding:0 22px;font-size:13px;font-feature-settings:"tnum";height:48px;transition:background .15s;position:relative}
+    .ticker-item::after{content:'·';position:absolute;right:-1px;color:var(--border-h);font-size:16px;line-height:1}
     .ticker-item:hover{background:var(--surf-2)}
-    .t-sym{font-weight:600;color:var(--text);font-family:var(--h-font)}
-    .t-price{color:var(--text-2)}
-    .t-chg{font-weight:600}
-    .t-up{color:var(--green)}.t-down{color:var(--red)}.t-flat{color:var(--text-3)}
+    .t-sym{font-weight:800;color:var(--accent);font-family:var(--h-font);font-size:12px;letter-spacing:.3px}
+    .t-price{color:var(--text);font-weight:500;font-size:13px}
+    .t-chg{font-weight:700;font-size:12px;padding:1px 6px;border-radius:4px}
+    .t-up{color:var(--green);background:rgba(0,200,150,.1)}.t-down{color:var(--red);background:rgba(255,77,77,.1)}.t-flat{color:var(--text-3)}
 
     /* ── HEADER ── */
     header{background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s}
@@ -229,6 +249,7 @@
 
 <!-- TICKER -->
 <div class="ticker-outer" id="tickerWrap">
+  <div class="ticker-live"><span class="ticker-live-dot"></span>LIVE</div>
   <span class="ticker-placeholder" id="tickerPlaceholder">Загрузка курсов…</span>
   <div class="ticker-track" id="tickerTrack" style="display:none"></div>
 </div>
@@ -353,7 +374,7 @@
     <div class="partners-grid">
       <div class="partner-card">
         <div class="partner-logo-wrap">
-          <img class="p-ico" src="https://exchange.whitebird.io/favicon.ico" alt="Whitebird" width="48" height="48" />
+          <img class="p-ico" src="whitebird_logo.svg" alt="Whitebird" width="48" height="48" style="background:none;padding:0" />
           <span class="partner-name">Whitebird</span>
         </div>
         <p class="partner-desc">Белорусская P2P-биржа, регулируется ПВТ. Низкие комиссии, BYN-поддержка. Работает официально — можно пополнить с белорусской карты.</p>
@@ -361,7 +382,7 @@
       </div>
       <div class="partner-card">
         <div class="partner-logo-wrap">
-          <img class="p-ico" src="https://www.bybit.com/favicon.ico" alt="Bybit" width="48" height="48" />
+          <img class="p-ico" src="bybit_logo.svg" alt="Bybit" width="48" height="48" style="background:none;padding:0" />
           <span class="partner-name">Bybit</span>
         </div>
         <p class="partner-desc">Международная биржа с низкими комиссиями. Фьючерсы, спот, копитрейдинг. Бонус за регистрацию.</p>
