@@ -172,13 +172,15 @@
     .buy-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 28px rgba(245,197,24,.4)}
 
     /* ── CONVERTER LAYOUT ── */
-    .conv-news-wrap{display:grid;grid-template-columns:500px 1fr;gap:40px;align-items:start}
+    .conv-news-wrap{display:grid;grid-template-columns:500px 1fr;gap:40px;align-items:stretch}
     @media(max-width:1100px){.conv-news-wrap{grid-template-columns:1fr}}
     .conv-card{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow)}
+    .news-side{display:flex;flex-direction:column}
+    .news-side .section-title{flex-shrink:0}
 
     /* ── NEWS ── */
-    .news-list{display:flex;flex-direction:column;gap:14px}
-    .news-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+    .news-list{display:flex;flex-direction:column;gap:14px;flex:1}
+    .news-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;flex:1;display:flex;flex-direction:column}
     .news-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 28px rgba(245,197,24,.12)}
     .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
     .news-badge{font-size:10px;font-weight:700;color:#000;background:var(--accent);border-radius:4px;padding:2px 7px;letter-spacing:.5px;text-transform:uppercase}
@@ -231,6 +233,12 @@
     .faq-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
     .faq-item.open .faq-body{max-height:300px}
     .faq-text{padding:0 20px 18px;font-size:14px;color:var(--text-2);line-height:1.7}
+
+    /* ── ABOUT ── */
+    .about-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:36px 40px;max-width:760px;box-shadow:var(--shadow)}
+    .about-card p{font-size:15px;color:var(--text-2);line-height:1.85;margin-bottom:16px}
+    .about-card p:last-child{margin-bottom:0}
+    @media(max-width:640px){.about-card{padding:24px 20px}}
 
     /* ── FOOTER ── */
     footer{background:var(--surf);border-top:1px solid var(--border);padding:40px 24px 28px;transition:background .3s}
@@ -448,7 +456,7 @@
           <img class="p-ico" src="whitebird_io_logo.jfif" alt="Whitebird" width="48" height="48" style="background:none;padding:0;border-radius:50%" />
           <span class="partner-name">Whitebird</span>
         </div>
-        <p class="partner-desc">Белорусская P2P-биржа, регулируется ПВТ. Низкие комиссии, BYN-поддержка. Работает официально — можно пополнить с белорусской карты.</p>
+        <p class="partner-desc">Белорусская криптобиржа, регулируется ПВТ. Низкие комиссии, BYN-поддержка. Работает официально — можно пополнить с белорусской карты.</p>
         <a class="partner-btn" href="https://exchange.whitebird.io/?refid=hTwY4wL8" target="_blank" rel="noopener">Перейти →</a>
       </div>
       <div class="partner-card">
@@ -475,6 +483,17 @@
 <section class="section" id="faq">
   <h2 class="section-title" style="margin-bottom:24px">Частые вопросы</h2>
   <div class="faq-list" id="faqList"></div>
+</section>
+
+<!-- О ПРОЕКТЕ -->
+<section class="section" id="about" style="padding-bottom:48px">
+  <h2 class="section-title" style="margin-bottom:24px">О проекте</h2>
+  <div class="about-card">
+    <p>MyCrypto.by — первый белорусский агрегатор курсов криптовалют.</p>
+    <p>Наша миссия — сделать крипту понятной и доступной для каждого беларуса. Мы собираем актуальные курсы с ведущих бирж, объясняем законодательство простым языком и помогаем выбрать надёжную платформу для покупки.</p>
+    <p>Мы не продаём криптовалюту и не храним ваши средства. Все сделки совершаются на сайтах наших партнёров-бирж: Whitebird, Bybit, Hash Hedge.</p>
+    <p>Проект создан командой энтузиастов крипторынка. Мы верим, что финансовая свобода начинается с доступа к информации.</p>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -797,6 +816,12 @@ const CRYPTO_CHIPS = {
 };
 const FIAT_CHIPS = [['100','100'],['500','500'],['1 000','1000'],['5 000','5000'],['10 000','10000']];
 
+function getDefaultVal(sym) {
+  if (FIAT_SET.has(sym))              return 1000;
+  if (sym === 'BTC' || sym === 'ETH') return 0.001;
+  return 1;
+}
+
 function updateChips() {
   const fSym = document.getElementById('fromSel').value;
   const chipsEl = document.getElementById('fromChips');
@@ -874,7 +899,11 @@ function calcConv() {
 }
 
 document.getElementById('fromInput').addEventListener('input', calcConv);
-document.getElementById('fromSel').addEventListener('change', () => { updateChips(); calcConv(); });
+document.getElementById('fromSel').addEventListener('change', () => {
+  document.getElementById('fromInput').value = getDefaultVal(document.getElementById('fromSel').value);
+  document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+  updateChips(); calcConv();
+});
 document.getElementById('toSel').addEventListener('change', calcConv);
 
 document.getElementById('fromChips').addEventListener('click', e => {
@@ -906,6 +935,7 @@ document.getElementById('rateRefresh').addEventListener('click', async () => {
   setTimeout(()=>btn.classList.remove('spin'), 500);
 });
 
+document.getElementById('fromInput').value = getDefaultVal(document.getElementById('fromSel').value);
 updateIcons(); updateChips(); updateBuyBtn();
 
 /* ══ MODAL ══ */
