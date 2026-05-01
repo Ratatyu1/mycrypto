@@ -91,8 +91,15 @@
     nav.main-nav{display:flex;gap:4px;margin-left:auto}
     nav.main-nav a{font-size:14px;font-weight:500;color:var(--text-2);padding:6px 14px;border-radius:8px;transition:color .2s,background .2s}
     nav.main-nav a:hover{color:var(--text);background:var(--surf)}
-    .theme-tog{width:38px;height:38px;border-radius:50%;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0}
-    .theme-tog:hover{background:var(--border)}
+    .theme-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .theme-icon{width:15px;height:15px;flex-shrink:0;transition:color .3s;color:var(--text-3)}
+    .theme-icon-moon{color:var(--accent)}
+    [data-theme="light"] .theme-icon-moon{color:var(--text-3)}
+    [data-theme="light"] .theme-icon-sun{color:var(--accent)}
+    .theme-tog{width:46px;height:26px;border-radius:13px;background:#1a1d26;border:1.5px solid #2e3140;position:relative;cursor:pointer;transition:background .3s,border-color .3s;flex-shrink:0;padding:0}
+    [data-theme="light"] .theme-tog{background:#e8e4d4;border-color:#c8b85a}
+    .theme-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--accent);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+    [data-theme="light"] .theme-knob{transform:translateX(20px)}
     .burger{display:none;flex-direction:column;gap:5px;padding:8px}
     .burger span{display:block;width:22px;height:2px;background:var(--text-2);border-radius:2px;transition:.3s}
     .mobile-nav{display:none;flex-direction:column;background:var(--surf);border-top:1px solid var(--border);padding:12px 0;transition:background .3s}
@@ -156,10 +163,6 @@
     .conv-sel-wrap{display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:50px;padding:5px 12px;flex-shrink:0}
     .conv-sel-wrap select{background:none;border:none;outline:none;font-family:var(--h-font);font-size:13px;font-weight:700;color:var(--text);cursor:pointer;-webkit-appearance:none;appearance:none}
     .conv-arr{font-size:10px;color:var(--text-3);pointer-events:none}
-    .chips{display:flex;gap:6px;flex-wrap:wrap}
-    .chip{font-size:12px;font-weight:600;color:var(--text-2);background:var(--surf-2);border:1px solid var(--border);border-radius:50px;padding:4px 12px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
-    .chip:hover{background:var(--border);color:var(--text)}
-    .chip.active{background:var(--accent);color:#000;border-color:var(--accent)}
     .conv-rate{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);min-height:18px;padding-left:2px}
     .rate-ref{font-size:15px;color:var(--text-3);cursor:pointer;line-height:1;padding:2px;transition:color .15s,transform .4s}
     .rate-ref:hover{color:var(--accent)}
@@ -307,7 +310,11 @@
       <a href="#converter">Конвертер</a>
       <a href="#exchanges">Инструменты</a>
     </nav>
-    <button class="theme-tog" id="themeToggle" title="Переключить тему">🌙</button>
+    <div class="theme-wrap">
+      <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <button class="theme-tog" id="themeToggle" title="Переключить тему" aria-label="Переключить тему"><span class="theme-knob"></span></button>
+      <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </div>
     <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -348,28 +355,11 @@
         <input class="conv-input" id="fromInput" type="number" placeholder="0" min="0" step="any" />
         <div class="conv-sel-wrap">
           <select id="fromSel">
-            <option value="BTC">BTC</option>
-            <option value="ETH">ETH</option>
-            <option value="SOL">SOL</option>
-            <option value="XRP">XRP</option>
-            <option value="BNB">BNB</option>
-            <option value="TON">TON</option>
-            <option value="HYPE">HYPE</option>
-            <option value="USDT">USDT</option>
-            <option value="USD">USD</option>
             <option value="BYN">BYN</option>
-            <option value="EUR">EUR</option>
-            <option value="RUB">RUB</option>
+            <option value="USD">USD</option>
           </select>
           <span class="conv-arr">▾</span>
         </div>
-      </div>
-      <div class="chips" id="fromChips">
-        <button class="chip" data-val="100">100</button>
-        <button class="chip" data-val="500">500</button>
-        <button class="chip" data-val="1000">1 000</button>
-        <button class="chip" data-val="5000">5 000</button>
-        <button class="chip" data-val="10000">10 000</button>
       </div>
     </div>
 
@@ -384,13 +374,13 @@
         <input class="conv-input" id="toInput" type="number" placeholder="0" min="0" step="any" readonly />
         <div class="conv-sel-wrap">
           <select id="toSel">
-            <option value="BYN">BYN</option>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="RUB">RUB</option>
             <option value="BTC">BTC</option>
             <option value="ETH">ETH</option>
             <option value="SOL">SOL</option>
+            <option value="XRP">XRP</option>
+            <option value="BNB">BNB</option>
+            <option value="TON">TON</option>
+            <option value="HYPE">HYPE</option>
             <option value="USDT">USDT</option>
           </select>
           <span class="conv-arr">▾</span>
@@ -800,34 +790,12 @@ function renderTicker() {
 }
 
 /* ══ CONVERTER ══ */
-const FIAT_SET   = new Set(['USD','BYN','EUR','RUB']);
-const CRYPTO_SET = new Set(['BTC','ETH','SOL','XRP','BNB','TON','HYPE','USDT','USDC']);
+const FIAT_OPTS   = ['BYN','USD'];
+const CRYPTO_OPTS = ['BTC','ETH','SOL','XRP','BNB','TON','HYPE','USDT'];
 
-const CRYPTO_CHIPS = {
-  BTC:  [['0.01','0.01'],['0.1','0.1'],['0.5','0.5'],['1','1']],
-  ETH:  [['0.1','0.1'],['0.5','0.5'],['1','1'],['5','5']],
-  SOL:  [['1','1'],['5','5'],['10','10'],['50','50']],
-  BNB:  [['1','1'],['5','5'],['10','10'],['50','50']],
-  XRP:  [['10','10'],['50','50'],['100','100'],['500','500']],
-  TON:  [['10','10'],['50','50'],['100','100'],['500','500']],
-  HYPE: [['1','1'],['5','5'],['10','10'],['50','50']],
-  USDT: [['100','100'],['500','500'],['1 000','1000'],['5 000','5000']],
-  USDC: [['100','100'],['500','500'],['1 000','1000'],['5 000','5000']],
-};
-const FIAT_CHIPS = [['100','100'],['500','500'],['1 000','1000'],['5 000','5000'],['10 000','10000']];
-
-function getDefaultVal(sym) {
-  if (FIAT_SET.has(sym))              return 1000;
-  if (sym === 'BTC' || sym === 'ETH') return 0.001;
-  return 1;
-}
-
-function updateChips() {
-  const fSym = document.getElementById('fromSel').value;
-  const chipsEl = document.getElementById('fromChips');
-  const vals = CRYPTO_CHIPS[fSym] || FIAT_CHIPS;
-  chipsEl.innerHTML = vals.map(([label, val]) =>
-    `<button class="chip" data-val="${val}">${label}</button>`).join('');
+function setSelOpts(sel, opts, selected) {
+  const pick = opts.includes(selected) ? selected : opts[0];
+  sel.innerHTML = opts.map(v => `<option value="${v}"${v===pick?' selected':''}>${v}</option>`).join('');
 }
 
 function updateBuyBtn() {
@@ -835,7 +803,7 @@ function updateBuyBtn() {
   const tSym = document.getElementById('toSel').value;
   const btn  = document.getElementById('buyBtn');
   if (!btn) return;
-  const selling = CRYPTO_SET.has(fSym) && FIAT_SET.has(tSym);
+  const selling = CRYPTO_OPTS.includes(fSym) && FIAT_OPTS.includes(tSym);
   btn.textContent = selling ? 'Продать / обменять →' : 'Купить криптовалюту →';
 }
 
@@ -899,33 +867,27 @@ function calcConv() {
 }
 
 document.getElementById('fromInput').addEventListener('input', calcConv);
-document.getElementById('fromSel').addEventListener('change', () => {
-  document.getElementById('fromInput').value = getDefaultVal(document.getElementById('fromSel').value);
-  document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-  updateChips(); calcConv();
-});
-document.getElementById('toSel').addEventListener('change', calcConv);
-
-document.getElementById('fromChips').addEventListener('click', e => {
-  const c = e.target.closest('.chip'); if (!c) return;
-  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
-  c.classList.add('active');
-  document.getElementById('fromInput').value = c.dataset.val;
-  calcConv();
-});
-document.getElementById('fromInput').addEventListener('input', () => {
-  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
-});
+document.getElementById('fromSel').addEventListener('change', () => { calcConv(); updateBuyBtn(); updateIcons(); });
+document.getElementById('toSel').addEventListener('change',   () => { calcConv(); updateBuyBtn(); updateIcons(); });
 
 let swapFlip = false;
 document.getElementById('swapBtn').addEventListener('click', () => {
-  const fS=document.getElementById('fromSel'), tS=document.getElementById('toSel');
-  const fI=document.getElementById('fromInput'), tI=document.getElementById('toInput');
-  [fS.value,tS.value]=[tS.value,fS.value];
+  const fS = document.getElementById('fromSel');
+  const tS = document.getElementById('toSel');
+  const fI = document.getElementById('fromInput');
+  const tI = document.getElementById('toInput');
+  const prevFrom = fS.value, prevTo = tS.value;
+  if (FIAT_OPTS.includes(prevFrom)) {
+    setSelOpts(fS, CRYPTO_OPTS, prevTo);
+    setSelOpts(tS, FIAT_OPTS, prevFrom);
+  } else {
+    setSelOpts(fS, FIAT_OPTS, prevTo);
+    setSelOpts(tS, CRYPTO_OPTS, prevFrom);
+  }
   fI.value = tI.value || '';
   swapFlip = !swapFlip;
   document.getElementById('swapBtn').style.transform = swapFlip ? 'rotate(180deg)' : 'rotate(0deg)';
-  prevOut=0; calcConv();
+  prevOut = 0; calcConv(); updateBuyBtn(); updateIcons();
 });
 
 document.getElementById('rateRefresh').addEventListener('click', async () => {
@@ -935,8 +897,10 @@ document.getElementById('rateRefresh').addEventListener('click', async () => {
   setTimeout(()=>btn.classList.remove('spin'), 500);
 });
 
-document.getElementById('fromInput').value = getDefaultVal(document.getElementById('fromSel').value);
-updateIcons(); updateChips(); updateBuyBtn();
+setSelOpts(document.getElementById('fromSel'), FIAT_OPTS, 'BYN');
+setSelOpts(document.getElementById('toSel'), CRYPTO_OPTS, 'BTC');
+document.getElementById('fromInput').value = 1000;
+updateIcons(); updateBuyBtn();
 
 /* ══ MODAL ══ */
 let mChart = null;
@@ -1010,7 +974,6 @@ document.getElementById('currSeg').addEventListener('click', e=>{
 /* ══ THEME ══ */
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme',t);
-  document.getElementById('themeToggle').textContent = t==='dark'?'🌙':'☀️';
   localStorage.setItem('theme',t);
 }
 document.getElementById('themeToggle').addEventListener('click',()=>{
