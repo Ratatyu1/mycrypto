@@ -137,6 +137,8 @@
     .chg.down{color:var(--red);background:rgba(255,77,77,.12)}
     .chg.flat{color:var(--text-3);background:var(--surf-2)}
     .vol-txt{font-size:12px;color:var(--text-3)}
+    .price-row{display:flex;align-items:baseline;gap:8px}
+    .load-badge{font-size:11px;color:var(--text-3);white-space:nowrap;font-weight:400;font-family:'Inter',sans-serif}
 
     /* ── SMALL CARDS ── */
     .small-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
@@ -544,13 +546,38 @@ const COIN_META = {
 };
 
 const FX       = { USD:1, BYN:3.27, EUR:0.92, RUB:89.5 };
-const FALLBACK = { BTC:96000, ETH:3200, SOL:145, XRP:0.52, BNB:610, TON:3.15, HYPE:25, USDT:1, USDC:1 };
+const FALLBACK = { BTC:97000, ETH:3200, SOL:150, XRP:1.38, BNB:620, TON:5.15, HYPE:40, USDT:1, USDC:1 };
 const RANKS    = { BTC:1, ETH:2, BNB:3, SOL:4, XRP:5, TON:6, HYPE:7, USDT:8, USDC:9 };
 
 let pricesUSD = { ...FALLBACK };
 let changes   = {};
 let volumes   = {};
 let activeCur = 'USD';
+let isLoading = true;
+
+/* ══ CACHE ══ */
+const CACHE_KEY = 'mc_price_v1';
+function saveCache() {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      t: Date.now(),
+      prices:  { ...pricesUSD },
+      changes: { ...changes },
+      volumes: { ...volumes },
+    }));
+  } catch {}
+}
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return false;
+    const c = JSON.parse(raw);
+    Object.assign(pricesUSD, c.prices);
+    Object.assign(changes,   c.changes);
+    Object.assign(volumes,   c.volumes);
+    return true;
+  } catch { return false; }
+}
 
 /* ══ FORMATTERS ══ */
 function fmtPrice(usd, cur='USD') {
@@ -603,11 +630,11 @@ async function fetchHypeCG() {
 }
 
 async function fetchAllCG() {
-  const ids = 'bitcoin,ethereum,solana,ripple,binancecoin,the-open-network,tether,usd-coin';
+  const ids = 'bitcoin,ethereum,solana,ripple,binancecoin,the-open-network,tether,usd-coin,hyperliquid';
   const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`);
   if (!res.ok) throw new Error('CG HTTP ' + res.status);
   const data = await res.json();
-  const map = { bitcoin:'BTC', ethereum:'ETH', solana:'SOL', ripple:'XRP', binancecoin:'BNB', 'the-open-network':'TON', tether:'USDT', 'usd-coin':'USDC' };
+  const map = { bitcoin:'BTC', ethereum:'ETH', solana:'SOL', ripple:'XRP', binancecoin:'BNB', 'the-open-network':'TON', tether:'USDT', 'usd-coin':'USDC', hyperliquid:'HYPE' };
   data.forEach(c => {
     const sym = map[c.id]; if (!sym) return;
     pricesUSD[sym] = c.current_price;
@@ -617,13 +644,18 @@ async function fetchAllCG() {
 }
 
 async function loadPrices() {
-  const [binanceRes, hypeRes] = await Promise.allSettled([fetchBinance(), fetchHypeCG()]);
-  if (binanceRes.status === 'rejected') {
-    console.warn('Binance fail — trying CoinGecko:', binanceRes.reason?.message);
-    const cgRes = await Promise.allSettled([fetchAllCG()]);
-    if (cgRes[0].status === 'rejected') console.warn('CoinGecko also failed:', cgRes[0].reason?.message);
+  const [binanceRes, hypeRes] = await Promise.all([
+    Promise.allSettled([fetchBinance()]),
+    Promise.allSettled([fetchHypeCG()]),
+  ]);
+  const binOk = binanceRes[0].status === 'fulfilled';
+  const hypeOk = hypeRes[0].status === 'fulfilled';
+  if (!binOk) {
+    console.warn('Binance fail — fallback CoinGecko:', binanceRes[0].reason?.message);
+    try { await fetchAllCG(); } catch(e) { console.warn('CoinGecko also failed:', e.message); }
+  } else if (!hypeOk) {
+    console.warn('HYPE CG fail, keeping fallback');
   }
-  if (hypeRes.status === 'rejected') console.warn('HYPE CG fail:', hypeRes.reason?.message);
 }
 
 /* ══ SPARKLINES ══ */
@@ -667,6 +699,7 @@ function renderCards() {
   const bigRow   = document.getElementById('bigRow');
   const smallRow = document.getElementById('smallRow');
 
+  const badge = isLoading ? '<span class="load-badge">обновляется…</span>' : '';
   bigRow.innerHTML = BIG.map(sym => {
     const m   = COIN_META[sym];
     const usd = pricesUSD[sym] ?? 0;
@@ -680,7 +713,10 @@ function renderCards() {
         <div class="name-wrap"><div class="coin-name">${m.name}</div><div class="coin-sym">${sym}</div></div>
         <div class="rank-badge">#${RANKS[sym]??'—'}</div>
       </div>
-      <div class="price-big" data-pricesym="${sym}">${fmtPrice(usd,activeCur)}</div>
+      <div class="price-row">
+        <div class="price-big" data-pricesym="${sym}">${fmtPrice(usd,activeCur)}</div>
+        ${badge}
+      </div>
       <div class="spark-wrap" id="spark-${sym}"><svg viewBox="0 0 100 56"></svg></div>
       <div class="card-big-foot">
         <span class="chg ${cls}">${sgn}${Math.abs(chg).toFixed(2)}%</span>
@@ -1082,12 +1118,20 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal
 
 /* ══ INIT ══ */
 async function init() {
-  renderCards(); renderTicker(); calcConv();
-  await loadPrices();
+  loadCache();                                    // instant: cache or FALLBACK
+  renderCards(); renderTicker(); calcConv();      // paint immediately
+
+  await loadPrices();                             // background fetch (parallel)
+  saveCache();
+  isLoading = false;
   renderCards(); renderTicker(); updateTimestamp(); calcConv();
 }
 init();
-setInterval(async()=>{ await loadPrices(); renderCards(); renderTicker(); updateTimestamp(); calcConv(); }, 60_000);
+setInterval(async () => {
+  await loadPrices();
+  saveCache();
+  renderCards(); renderTicker(); updateTimestamp(); calcConv();
+}, 60_000);
 </script>
 </body>
 </html>
