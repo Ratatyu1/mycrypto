@@ -545,7 +545,7 @@ const COIN_META = {
   RUB:  { name:'Рос. рубль',   img:'https://flagcdn.com/w40/ru.png',  bkey:null },
 };
 
-const FX       = { USD:1, BYN:3.27, EUR:0.92, RUB:89.5 };
+let FX         = { USD:1, BYN:2.83, EUR:0.92, RUB:89.5 };
 const FALLBACK = { BTC:97000, ETH:3200, SOL:150, XRP:1.38, BNB:620, TON:5.15, HYPE:40, USDT:1, USDC:1 };
 const RANKS    = { BTC:1, ETH:2, BNB:3, SOL:4, XRP:5, TON:6, HYPE:7, USDT:8, USDC:9 };
 
@@ -596,6 +596,13 @@ function fmtVol(usd) {
 function chgCls(c) { return Math.abs(c) < 0.01 ? 'flat' : c >= 0 ? 'up' : 'down'; }
 
 /* ══ API ══ */
+async function fetchNBRB() {
+  const res = await fetch('https://api.nbrb.by/exrates/rates/431');
+  if (!res.ok) throw new Error('NBRB HTTP ' + res.status);
+  const d = await res.json();
+  FX.BYN = d.Cur_OfficialRate;
+}
+
 async function fetchBinance() {
   const res = await fetch(BINANCE_URL);
   if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -644,18 +651,15 @@ async function fetchAllCG() {
 }
 
 async function loadPrices() {
-  const [binanceRes, hypeRes] = await Promise.all([
-    Promise.allSettled([fetchBinance()]),
-    Promise.allSettled([fetchHypeCG()]),
+  const [binRes, hypeRes, nbrbRes] = await Promise.allSettled([
+    fetchBinance(), fetchHypeCG(), fetchNBRB(),
   ]);
-  const binOk = binanceRes[0].status === 'fulfilled';
-  const hypeOk = hypeRes[0].status === 'fulfilled';
-  if (!binOk) {
-    console.warn('Binance fail — fallback CoinGecko:', binanceRes[0].reason?.message);
+  if (binRes.status  === 'rejected') {
+    console.warn('Binance fail — fallback CoinGecko:', binRes.reason?.message);
     try { await fetchAllCG(); } catch(e) { console.warn('CoinGecko also failed:', e.message); }
-  } else if (!hypeOk) {
-    console.warn('HYPE CG fail, keeping fallback');
   }
+  if (hypeRes.status === 'rejected') console.warn('HYPE CG fail, keeping fallback');
+  if (nbrbRes.status === 'rejected') console.warn('NBRB fail, BYN fallback 2.83:', nbrbRes.reason?.message);
 }
 
 /* ══ SPARKLINES ══ */
