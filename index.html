@@ -16,7 +16,7 @@
     gtag('js', new Date());
     gtag('config', 'G-V53B0NQFTS');
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer></script>
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js" defer></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth;font-size:16px}
@@ -256,25 +256,31 @@
     .footer-copy{font-size:12px;color:var(--text-3);line-height:1.6}
 
     /* ── MODAL ── */
-    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s}
+    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s;padding:16px}
     .modal-ov.open{opacity:1;pointer-events:all}
-    .modal-box{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:480px;position:relative;transform:translateY(16px) scale(.97);transition:transform .25s}
+    .modal-box{background:var(--surf);border:2px solid var(--accent);border-radius:16px;padding:28px;width:100%;max-width:640px;position:relative;transform:translateY(16px) scale(.97);transition:transform .25s;max-height:90vh;overflow-y:auto}
     .modal-ov.open .modal-box{transform:none}
-    .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--surf-2);border:1px solid var(--border);color:var(--text-2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
+    .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--surf-2);border:1px solid var(--border);color:var(--text-2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;flex-shrink:0;z-index:2}
     .modal-close:hover{background:var(--border);color:var(--text)}
-    .modal-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-    .modal-img{width:44px;height:44px;border-radius:50%}
+    .modal-hd{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-right:36px}
+    .modal-img{width:44px;height:44px;border-radius:50%;flex-shrink:0}
     .modal-sym{font-family:var(--h-font);font-size:20px;font-weight:800;color:var(--text)}
     .modal-nm{font-size:13px;color:var(--text-2)}
-    .modal-stats{display:flex;gap:16px;align-items:baseline;margin-bottom:24px}
+    .modal-stats{display:flex;gap:16px;align-items:baseline;margin-bottom:16px}
     .modal-price{font-family:var(--h-font);font-size:32px;font-weight:800;color:var(--text);font-feature-settings:"tnum"}
     .modal-chg{font-size:15px;font-weight:700;padding:3px 10px;border-radius:7px}
     .modal-chg.up{color:var(--green);background:rgba(0,200,150,.12)}
     .modal-chg.down{color:var(--red);background:rgba(255,77,77,.12)}
     .modal-chg.flat{color:var(--text-3);background:var(--surf-2)}
-    .modal-chart-wrap{height:180px}
     .modal-chart-lbl{font-size:11px;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+    .modal-tv-chart{height:300px;border-radius:8px;overflow:hidden;background:var(--surf-2)}
+    .modal-info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+    .modal-info-item{background:var(--surf-2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px}
+    .modal-info-lbl{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px}
+    .modal-info-val{font-family:var(--h-font);font-size:15px;font-weight:700;color:var(--text);font-feature-settings:"tnum"}
+    .modal-info-val.up{color:var(--green)}.modal-info-val.down{color:var(--red)}.modal-info-val.flat{color:var(--text-3)}
     .modal-stable{text-align:center;padding:24px 0;color:var(--text-2);font-size:14px}
+    @media(max-width:520px){.modal-info-grid{grid-template-columns:1fr 1fr}}
 
     /* ── RESPONSIVE ── */
     @media(max-width:900px){.small-row{grid-template-columns:repeat(3,1fr)}}
@@ -285,8 +291,9 @@
       .price-big{font-size:28px}
       .conv-card{padding:20px 16px}
       .partners-grid{grid-template-columns:1fr}
-      .modal-box{padding:20px 16px}
+      .modal-box{padding:20px 16px;max-width:100%}
       .modal-price{font-size:26px}
+      .modal-tv-chart{height:240px}
     }
     @media(max-width:420px){.small-row{grid-template-columns:repeat(2,1fr)}}
   </style>
@@ -515,7 +522,29 @@
       <div class="modal-price" id="modalPrice"></div>
       <div class="modal-chg"   id="modalChg"></div>
     </div>
-    <div id="modalContent"></div>
+    <div id="modalTvWrap">
+      <div class="modal-chart-lbl">График за 7 дней</div>
+      <div class="modal-tv-chart" id="modalTvChart"></div>
+    </div>
+    <div class="modal-info-grid" id="modalInfoGrid">
+      <div class="modal-info-item">
+        <span class="modal-info-lbl">Изм. 24ч</span>
+        <span class="modal-info-val" id="infoChg">—</span>
+      </div>
+      <div class="modal-info-item">
+        <span class="modal-info-lbl">Объём 24ч</span>
+        <span class="modal-info-val" id="infoVol">—</span>
+      </div>
+      <div class="modal-info-item">
+        <span class="modal-info-lbl">Макс 24ч</span>
+        <span class="modal-info-val" id="infoHigh">—</span>
+      </div>
+      <div class="modal-info-item">
+        <span class="modal-info-lbl">Мин 24ч</span>
+        <span class="modal-info-val" id="infoLow">—</span>
+      </div>
+    </div>
+    <div class="modal-stable" id="modalStable" style="display:none"></div>
   </div>
 </div>
 
@@ -552,6 +581,8 @@ const RANKS    = { BTC:1, ETH:2, BNB:3, SOL:4, XRP:5, TON:6, HYPE:7, USDT:8, USD
 let pricesUSD = { ...FALLBACK };
 let changes   = {};
 let volumes   = {};
+let highs     = {};
+let lows      = {};
 let activeCur = 'USD';
 let isLoading = true;
 
@@ -625,6 +656,8 @@ async function fetchBinance() {
       pricesUSD[sym] = price;
       changes[sym]   = chg;
       volumes[sym]   = vol;
+      highs[sym]     = parseFloat(t.highPrice);
+      lows[sym]      = parseFloat(t.lowPrice);
     }
   });
 }
@@ -633,7 +666,7 @@ async function fetchHypeCG() {
   const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=hyperliquid');
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const d = await res.json();
-  if (d[0]) { pricesUSD.HYPE = d[0].current_price; changes.HYPE = d[0].price_change_percentage_24h ?? 0; volumes.HYPE = d[0].total_volume ?? 0; }
+  if (d[0]) { pricesUSD.HYPE = d[0].current_price; changes.HYPE = d[0].price_change_percentage_24h ?? 0; volumes.HYPE = d[0].total_volume ?? 0; highs.HYPE = d[0].high_24h ?? 0; lows.HYPE = d[0].low_24h ?? 0; }
 }
 
 async function fetchAllCG() {
@@ -647,6 +680,8 @@ async function fetchAllCG() {
     pricesUSD[sym] = c.current_price;
     changes[sym]   = c.price_change_percentage_24h ?? 0;
     volumes[sym]   = c.total_volume ?? 0;
+    highs[sym]     = c.high_24h ?? 0;
+    lows[sym]      = c.low_24h  ?? 0;
   });
 }
 
@@ -943,63 +978,119 @@ document.getElementById('fromInput').value = 1000;
 updateIcons(); updateBuyBtn();
 
 /* ══ MODAL ══ */
-let mChart = null;
+let tvChart = null;
+
 function openModal(sym) {
   const m = COIN_META[sym]; if (!m) return;
-  const usd = pricesUSD[sym]??0, chg=changes[sym]??0;
+  const usd = pricesUSD[sym] ?? 0;
+  const chg = changes[sym]  ?? 0;
+  const vol = volumes[sym]  ?? 0;
+  const hi  = highs[sym]   ?? 0;
+  const lo  = lows[sym]    ?? 0;
   const cls = chgCls(chg);
-  document.getElementById('modalImg').src   = m.img;
-  document.getElementById('modalImg').alt   = sym;
+
+  document.getElementById('modalImg').src          = m.img;
+  document.getElementById('modalImg').alt          = sym;
   document.getElementById('modalSym').textContent  = sym;
   document.getElementById('modalName').textContent = m.name;
-  document.getElementById('modalPrice').textContent = fmtPrice(usd,'USD');
+  document.getElementById('modalPrice').textContent = fmtPrice(usd, 'USD');
+
   const ce = document.getElementById('modalChg');
-  ce.textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
-  ce.className   = 'modal-chg '+cls;
-  const content  = document.getElementById('modalContent');
+  ce.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+  ce.className   = 'modal-chg ' + cls;
+
+  const tvWrap   = document.getElementById('modalTvWrap');
+  const infoGrid = document.getElementById('modalInfoGrid');
+  const stable   = document.getElementById('modalStable');
+
   if (!m.bkey) {
-    content.innerHTML = `<div class="modal-stable">Стейблкоин · $${usd.toFixed(4)} · 24ч: ${chg>=0?'+':''}${chg.toFixed(4)}%</div>`;
+    tvWrap.style.display   = 'none';
+    infoGrid.style.display = 'none';
+    stable.style.display   = '';
+    stable.textContent = `Стейблкоин · $${usd.toFixed(4)} · 24ч: ${chg >= 0 ? '+' : ''}${chg.toFixed(4)}%`;
   } else {
-    content.innerHTML = `<div class="modal-chart-lbl">График за 7 дней</div><div class="modal-chart-wrap"><canvas id="mCanvas"></canvas></div>`;
-    loadMChart(sym, m.bkey, chg>=0);
+    tvWrap.style.display   = '';
+    infoGrid.style.display = '';
+    stable.style.display   = 'none';
+
+    const infoChgEl = document.getElementById('infoChg');
+    infoChgEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+    infoChgEl.className   = 'modal-info-val ' + cls;
+    document.getElementById('infoVol').textContent  = fmtVol(vol);
+    document.getElementById('infoHigh').textContent = hi ? '$' + hi.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—';
+    document.getElementById('infoLow').textContent  = lo ? '$' + lo.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—';
+
+    loadTVChart(m.bkey);
   }
+
   document.getElementById('modal').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
+
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow='';
-  if(mChart){mChart.destroy();mChart=null;}
+  document.body.style.overflow = '';
+  if (tvChart) { tvChart.remove(); tvChart = null; }
 }
-async function loadMChart(sym, bkey, isUp) {
+
+async function loadTVChart(bkey) {
+  const container = document.getElementById('modalTvChart');
+  if (!container) return;
+  if (tvChart) { tvChart.remove(); tvChart = null; }
+  container.innerHTML = '';
+
+  if (typeof LightweightCharts === 'undefined') {
+    container.innerHTML = '<p style="color:var(--text-3);font-size:13px;text-align:center;padding:40px 0">Загрузка графика…</p>';
+    return;
+  }
+
+  const isDark   = document.documentElement.getAttribute('data-theme') === 'dark';
+  const bg       = isDark ? '#16181f' : '#f8f9fa';
+  const textCol  = isDark ? '#8b919e' : '#555555';
+  const gridCol  = isDark ? '#22252e' : '#e0e0e0';
+  const brdCol   = isDark ? '#2e3140' : '#c0c0c0';
+
   try {
-    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${bkey}&interval=1d&limit=7`);
-    if(!res.ok) throw 0;
-    const data = await res.json();
-    const labels = data.map(k=>new Date(k[0]).toLocaleDateString('ru-RU',{month:'short',day:'numeric'}));
-    const closes = data.map(k=>parseFloat(k[4]));
-    const canvas = document.getElementById('mCanvas'); if(!canvas) return;
-    const col = isUp?'#00c896':'#ff4d4d';
-    const grd = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'#22252e';
-    const tck = getComputedStyle(document.documentElement).getPropertyValue('--chart-tick').trim()||'#8b919e';
-    if(mChart){mChart.destroy();mChart=null;}
-    mChart = new Chart(canvas,{
-      type:'line',
-      data:{labels,datasets:[{data:closes,borderColor:col,backgroundColor:col+'18',borderWidth:2,pointRadius:3,pointBackgroundColor:col,fill:true,tension:0.3}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.y.toLocaleString('en-US',{maximumFractionDigits:2})}}},
-        scales:{
-          x:{ticks:{color:tck,font:{size:11}},grid:{color:grd}},
-          y:{ticks:{color:tck,font:{size:11},callback:v=>'$'+v.toLocaleString()},grid:{color:grd}}
-        }}
+    tvChart = LightweightCharts.createChart(container, {
+      width:  container.clientWidth || 580,
+      height: 300,
+      layout: { background: { color: bg }, textColor: textCol },
+      grid:   { vertLines: { color: gridCol }, horzLines: { color: gridCol } },
+      rightPriceScale: { borderColor: brdCol },
+      timeScale:       { borderColor: brdCol, timeVisible: false },
+      handleScroll: false,
+      handleScale:  false,
     });
-  } catch(e) {
-    const w=document.getElementById('mCanvas')?.parentNode;
-    if(w) w.innerHTML='<p style="color:var(--text-3);font-size:13px;text-align:center;padding:20px">График недоступен</p>';
+
+    const candles = tvChart.addCandlestickSeries({
+      upColor:         '#00c896',
+      downColor:       '#ff4d4d',
+      borderUpColor:   '#00c896',
+      borderDownColor: '#ff4d4d',
+      wickUpColor:     '#00c896',
+      wickDownColor:   '#ff4d4d',
+    });
+
+    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${bkey}&interval=1d&limit=7`);
+    if (!res.ok) throw 0;
+    const raw = await res.json();
+
+    candles.setData(raw.map(k => ({
+      time:  Math.floor(k[0] / 1000),
+      open:  parseFloat(k[1]),
+      high:  parseFloat(k[2]),
+      low:   parseFloat(k[3]),
+      close: parseFloat(k[4]),
+    })));
+    tvChart.timeScale().fitContent();
+  } catch {
+    container.innerHTML = '<p style="color:var(--text-3);font-size:13px;text-align:center;padding:40px 0">График недоступен</p>';
+    if (tvChart) { tvChart.remove(); tvChart = null; }
   }
 }
+
 document.getElementById('modalClose').addEventListener('click', closeModal);
-document.getElementById('modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 /* Escape handled in ARTICLES block below */
 
 /* ══ CURRENCY SEG ══ */
