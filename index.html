@@ -184,20 +184,22 @@
     .news-side .section-title{flex-shrink:0}
 
     /* ── NEWS ── */
-    .news-list{display:flex;flex-direction:column;gap:14px;flex:1}
-    .news-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;flex:1;display:flex;flex-direction:column}
-    .news-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 28px rgba(245,197,24,.12)}
+    .news-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    @media(max-width:640px){.news-grid{grid-template-columns:1fr}}
+    .news-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+    .news-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 10px 36px rgba(245,197,24,.14)}
     .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
     .news-badge{font-size:10px;font-weight:700;color:#000;background:var(--accent);border-radius:4px;padding:2px 7px;letter-spacing:.5px;text-transform:uppercase}
+    .news-badge-new{background:#00c896}
     .news-date{font-size:12px;color:var(--text-3)}
     .news-title{font-family:var(--h-font);font-size:15px;font-weight:700;color:var(--text);margin-bottom:7px;line-height:1.4}
-    .news-preview{font-size:13px;color:var(--text-2);line-height:1.65}
-    .news-read{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--accent);margin-top:10px}
+    .news-preview{font-size:13px;color:var(--text-2);line-height:1.65;flex:1}
+    .news-read{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--accent);margin-top:12px}
 
     /* ── ARTICLE MODAL ── */
     .art-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1001;opacity:0;pointer-events:none;transition:opacity .25s;padding:16px}
     .art-modal-ov.open{opacity:1;pointer-events:all}
-    .art-modal-box{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;position:relative;transform:translateY(16px) scale(.97);transition:transform .25s}
+    .art-modal-box{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;position:relative;transform:translateY(16px) scale(.97);transition:transform .25s}
     .art-modal-ov.open .art-modal-box{transform:none}
     .art-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--surf-2);border:1px solid var(--border);color:var(--text-2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;flex-shrink:0}
     .art-modal-close:hover{background:var(--border);color:var(--text)}
@@ -210,6 +212,15 @@
     .art-modal-body a{color:var(--accent);word-break:break-all}
     .art-modal-body a:hover{text-decoration:underline}
     .art-src{font-size:11px;color:var(--text-3);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+    .art-modal-nav{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+    .art-nav-btn{width:40px;height:40px;border-radius:50%;background:var(--surf-2);border:1px solid var(--border);color:var(--text);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s}
+    .art-nav-btn:hover:not(:disabled){background:var(--border);border-color:var(--accent)}
+    .art-nav-btn:disabled{opacity:.25;cursor:default;pointer-events:none}
+    .art-indicator{font-size:12px;color:var(--text-3)}
+    @keyframes art-slide-right{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+    @keyframes art-slide-left{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+    .art-body-slide-right{animation:art-slide-right .22s ease}
+    .art-body-slide-left{animation:art-slide-left .22s ease}
 
     /* ── PARTNERS ── */
     .section-bg{background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .3s}
@@ -351,12 +362,10 @@
   <div class="small-row" id="smallRow"></div>
 </section>
 
-<!-- CONVERTER + NEWS -->
+<!-- CONVERTER -->
 <section class="section" id="converter" style="padding-top:0">
-  <div class="conv-news-wrap">
-  <div class="conv-side">
   <h2 class="section-title" style="margin-bottom:24px">Конвертер</h2>
-  <div class="conv-card">
+  <div class="conv-card" style="max-width:500px">
     <div class="conv-row">
       <span class="conv-lbl">Отдаю</span>
       <div class="conv-field">
@@ -406,33 +415,13 @@
         Купить криптовалюту →
       </a>
     </div>
-  </div><!-- /conv-card -->
-  </div><!-- /conv-side -->
+  </div>
+</section>
 
-  <div class="news-side">
-    <h2 class="section-title" style="margin-bottom:24px">Актуальное</h2>
-    <div class="news-list">
-      <div class="news-card" onclick="openArticle(0)">
-        <div class="news-meta">
-          <span class="news-badge">Новость</span>
-          <span class="news-date">23 апр 2026</span>
-        </div>
-        <div class="news-title">Криптобанки в Беларуси: 26 валют и 11 операций</div>
-        <p class="news-preview">Нацбанк утвердил перечень криптовалют и операций для будущих криптобанков. BTC, ETH, TON, SOL, стейблкоины...</p>
-        <span class="news-read">Читать далее →</span>
-      </div>
-      <div class="news-card" onclick="openArticle(1)">
-        <div class="news-meta">
-          <span class="news-badge">Закон</span>
-          <span class="news-date">21 дек 2017</span>
-        </div>
-        <div class="news-title">Декрет №8: что можно и нельзя с криптой</div>
-        <p class="news-preview">С 2018 года в Беларуси легально: майнинг, покупка, продажа. Но криптой нельзя платить за товары...</p>
-        <span class="news-read">Читать далее →</span>
-      </div>
-    </div>
-  </div><!-- /news-side -->
-  </div><!-- /conv-news-wrap -->
+<!-- NEWS -->
+<section class="section" id="news" style="padding-top:0">
+  <h2 class="section-title" style="margin-bottom:28px">Актуальное</h2>
+  <div class="news-grid" id="newsGrid"></div>
 </section>
 
 <!-- ARTICLE MODAL -->
@@ -442,6 +431,11 @@
     <div class="art-modal-date" id="artDate"></div>
     <div class="art-modal-title" id="artTitle"></div>
     <div class="art-modal-body" id="artBody"></div>
+    <div class="art-modal-nav">
+      <button class="art-nav-btn" id="artPrev" aria-label="Предыдущая статья">←</button>
+      <span class="art-indicator" id="artIndicator"></span>
+      <button class="art-nav-btn" id="artNext" aria-label="Следующая статья">→</button>
+    </div>
   </div>
 </div>
 
@@ -1158,8 +1152,9 @@ function toggleFaq(i){
 /* ══ ARTICLES ══ */
 const ARTICLES = [
   {
-    date: '23 апреля 2026',
+    badge: 'Новость', isoDate: '2026-04-23', date: '23 апреля 2026',
     title: 'Криптобанки в Беларуси: 26 валют и 11 операций',
+    preview: 'Нацбанк утвердил перечень криптовалют и операций для будущих криптобанков. BTC, ETH, TON, SOL, стейблкоины...',
     body: `<p>23 апреля 2026 года Нацбанк и ПВТ утвердили перечень для будущих криптобанков.</p>
 <h3>26 криптовалют:</h3>
 <p>Bitcoin (BTC), Ethereum (ETH), Toncoin (TON), Solana (SOL) + стейблкоины и другие популярные активы.</p>
@@ -1176,8 +1171,9 @@ const ARTICLES = [
 <div class="art-src">Источник: <a href="https://belta.by/economics/view/kriptobanki-belarusi-budut-ispolzovat-26-valjut-i-provodit-11-operatsij-kakie-imenno-776879-2026/" target="_blank" rel="noopener">belta.by</a></div>`,
   },
   {
-    date: '21 декабря 2017',
+    badge: 'Закон', isoDate: '2017-12-21', date: '21 декабря 2017',
     title: 'Декрет №8: что можно и нельзя с криптой',
+    preview: 'С 2018 года в Беларуси легально: майнинг, покупка, продажа. Но криптой нельзя платить за товары...',
     body: `<p>21 декабря 2017 года Президент подписал Декрет №8 «О развитии цифровой экономики». Вступил в силу 28 марта 2018 года. Беларусь стала первой страной в мире, легализовавшей смарт-контракты и криптовалюты.</p>
 <h3>Что можно:</h3>
 <ul>
@@ -1194,27 +1190,255 @@ const ARTICLES = [
 <p>Налоги: физлица до 2025 года не платили налог на операции с криптой. С 2025 года возможны изменения.</p>
 <div class="art-src">Источник: <a href="https://president.gov.by/ru/documents/dekret-8-ot-21-dekabrja-2017-g-17716" target="_blank" rel="noopener">president.gov.by</a></div>`,
   },
+  {
+    badge: 'Налоги', isoDate: '2026-05-02', date: '2 мая 2026',
+    title: 'Как платить налоги с криптовалюты в Беларуси',
+    preview: 'С 2025 года новые правила: 0% через ПВТ-резиденты, 13% через зарубежные биржи. Декларация до 31 марта...',
+    body: `<p>С 1 января 2025 года в Беларуси действуют новые правила налогообложения криптовалюты.</p>
+<h3>Когда налог НЕ платится (ставка 0%):</h3>
+<ul>
+<li>Операции через резидентов ПВТ — Whitebird, BYNEX</li>
+<li>Майнинг криптовалюты</li>
+<li>Обмен токенов на другие токены</li>
+<li>Дарение от близких родственников</li>
+<li>Наследование криптовалюты</li>
+</ul>
+<h3>Когда налог ПЛАТИТСЯ (ставка 13%):</h3>
+<ul>
+<li>Операции через иностранные биржи — Binance, Bybit, Coinbase</li>
+<li>Доход = сумма, выведенная с биржи. Расходы <strong>не учитываются</strong></li>
+</ul>
+<p><strong>Пример:</strong> Купили BTC за $1 000, продали за $1 500 через Binance. Налог платится с полных $1 500, а не с прибыли $500.</p>
+<h3>Важно:</h3>
+<ul>
+<li>Декларация — до 31 марта следующего года</li>
+<li>Не задекларировал — ставка вырастает до 26%</li>
+<li>Незаконные операции (вне ПВТ-резидентов) — тоже 26%</li>
+</ul>
+<h3>Как легально работать с криптой:</h3>
+<ul>
+<li>Покупайте через белорусские биржи-резиденты ПВТ</li>
+<li>Если используете зарубежные площадки — заводите и выводите средства через ПВТ</li>
+<li>Храните подтверждения всех операций</li>
+</ul>
+<div class="art-src">Источники: nalog.gov.by, president.gov.by (Декрет №8)</div>`,
+  },
+  {
+    badge: 'Рынок', isoDate: '2024-01-11', date: '11 января 2024',
+    title: 'Bitcoin ETF в США: что это значит для беларусов',
+    preview: '10 января 2024 SEC одобрила 11 биткоин-фондов от BlackRock, Fidelity и других гигантов. Институциональные деньги входят в крипту...',
+    body: `<p>10 января 2024 года SEC одобрила 11 спотовых биткоин-фондов. Историческое событие для крипторынка.</p>
+<h3>Что такое Bitcoin ETF?</h3>
+<p>ETF (биржевой фонд) — ценная бумага, отслеживающая цену актива. Спотовый Bitcoin ETF напрямую владеет биткоинами, в отличие от фьючерсных фондов.</p>
+<h3>Кто запустил Bitcoin ETF:</h3>
+<ul>
+<li>BlackRock (крупнейшая управляющая компания в мире)</li>
+<li>Fidelity, Grayscale, ARK Invest, VanEck</li>
+<li>Franklin Templeton, Invesco и ещё 4 эмитента</li>
+</ul>
+<h3>Почему это важно:</h3>
+<ul>
+<li>Пенсионные и страховые фонды теперь могут покупать Bitcoin через привычные инструменты</li>
+<li>Если BlackRock работает с Bitcoin — это сигнал доверия для традиционных инвесторов</li>
+<li>Не нужны кошельки и seed-фразы — достаточно купить акции фонда через брокера</li>
+</ul>
+<h3>Что это значит для беларусов:</h3>
+<ul>
+<li>Доступ через международные брокеры (при наличии зарубежного счёта)</li>
+<li>Сигнал, что биткоин становится мейнстримом</li>
+<li>Приток институциональных денег = поддержка цены BTC</li>
+</ul>
+<p>За первый год ETF привлекли десятки миллиардов долларов. BlackRock прогнозировал $2 млрд только от существующих держателей биткоина.</p>
+<div class="art-src">Источники: Forbes.ru, РБК Крипто, NPR, Fortune</div>`,
+  },
+  {
+    badge: 'Инструменты', isoDate: '2026-05-02', date: '2 мая 2026',
+    title: 'Staking криптовалют: пассивный доход без майнинга',
+    preview: 'Как зарабатывать 3–15% годовых на ETH, SOL, ATOM без трейдинга. Разбор видов стейкинга и реальных рисков...',
+    body: `<p>Стейкинг — способ зарабатывать на криптовалюте без трейдинга и дорогих видеокарт.</p>
+<h3>Что такое стейкинг?</h3>
+<p>Вы блокируете монеты в блокчейне (Ethereum, Solana, Cardano), сеть использует их для подтверждения транзакций и начисляет вознаграждение. Аналогия: банковский вклад, но вместо банка — блокчейн.</p>
+<h3>Доходность в 2026 году:</h3>
+<ul>
+<li>Ethereum (ETH) — ~2.9% годовых</li>
+<li>Solana (SOL) — 6–8%</li>
+<li>Cosmos (ATOM) — до 15%</li>
+<li>Polkadot (DOT) — 5–14%</li>
+</ul>
+<h3>Виды стейкинга:</h3>
+<ul>
+<li><strong>Фиксированный</strong> — блокируете на срок, фиксированный процент</li>
+<li><strong>Гибкий</strong> — вывод в любой момент, доходность ниже</li>
+<li><strong>Делегированный</strong> — передаёте монеты валидатору, он делится наградой</li>
+<li><strong>Liquid staking</strong> — получаете токен-заменитель (stETH), можно использовать в DeFi</li>
+</ul>
+<h3>Риски:</h3>
+<ul>
+<li>Волатильность: заработали 15%, монета упала 50% = итоговый минус</li>
+<li>Блокировка: нельзя вывести до окончания срока</li>
+<li>Слэшинг: штраф за нарушения валидатора</li>
+<li>Риск платформы: взлом биржи или протокола</li>
+</ul>
+<h3>Где стейкать:</h3>
+<ul>
+<li>Биржи: Binance, Bybit (проще для новичков)</li>
+<li>Нативно: кошельки Metamask, Phantom</li>
+<li>DeFi: Lido, Rocket Pool (для продвинутых)</li>
+</ul>
+<p><strong>Главное правило:</strong> Не вкладывайте больше, чем готовы потерять.</p>
+<div class="art-src">Источники: KuCoin, Tinkoff, Crypto.ru, vc.ru</div>`,
+  },
+  {
+    badge: 'Безопасность', isoDate: '2026-05-02', date: '2 мая 2026',
+    title: 'Как не потерять крипту: основы безопасности',
+    preview: 'Seed-фраза, холодные кошельки, 2FA. Памятка по защите криптовалюты от взлома и собственных ошибок...',
+    body: `<p>Криптовалюту нельзя вернуть через службу поддержки. Один неверный клик — и средства уходят навсегда.</p>
+<h3>Seed-фраза — ваш главный ключ</h3>
+<p>12 или 24 слова, восстанавливающие доступ к кошельку. Кто знает вашу seed-фразу — владеет вашими деньгами.</p>
+<ul>
+<li>❌ Не храните в заметках, облаке, почте</li>
+<li>❌ Не фотографируйте, не отправляйте в мессенджерах</li>
+<li>✅ Записывайте на бумаге в нескольких экземплярах</li>
+<li>✅ Храните в разных местах (дом, сейф, у родственников)</li>
+</ul>
+<h3>Типы кошельков:</h3>
+<ul>
+<li><strong>Горячие</strong> (MetaMask, Trust Wallet) — удобно, но онлайн = риск взлома</li>
+<li><strong>Холодные</strong> (Ledger, Trezor, Tangem) — приватный ключ никогда не выходит в интернет</li>
+</ul>
+<p><strong>Правило:</strong> Крупные суммы — на холодный кошелёк, мелкие для трейдинга — на горячий.</p>
+<h3>Базовые правила безопасности:</h3>
+<ul>
+<li>✅ Включайте 2FA везде</li>
+<li>✅ Проверяйте адреса перед отправкой — первые и последние 4 символа</li>
+<li>✅ Используйте только официальные сайты и приложения</li>
+<li>✅ Не переходите по ссылкам из Telegram/email</li>
+</ul>
+<h3>Частые мошенничества:</h3>
+<ul>
+<li>«Служба поддержки Metamask» пишет в Telegram → мошенники</li>
+<li>Сайт похож на Binance, но URL binanse.com → фишинг</li>
+<li>Хранение всех средств на одной бирже → риск блокировки</li>
+</ul>
+<p><strong>Если украли монеты:</strong> Вернуть нельзя. Транзакции в блокчейне необратимы.</p>
+<div class="art-src">Источники: vc.ru, CoinTelegraph, DTF</div>`,
+  },
+  {
+    badge: 'DeFi', isoDate: '2026-05-02', date: '2 мая 2026',
+    title: 'DeFi для новичков: что такое децентрализованные финансы',
+    preview: 'Банковские услуги без банков. Как работают кредиты, вклады и обмен валют через смарт-контракты...',
+    body: `<p>DeFi (Decentralized Finance) — это банковские услуги без банков. Кредиты, вклады, обмен валют работают через код, а не через менеджеров.</p>
+<h3>Как это работает?</h3>
+<p>Вместо банка — блокчейн. Вместо сотрудников — смарт-контракты (программы, автоматически исполняющие условия).</p>
+<p><strong>Пример:</strong> Обмен USDT → ETH. Традиционно: регистрация + верификация. DeFi: подключаете кошелёк к Uniswap — обмен за 30 секунд.</p>
+<h3>Основные возможности DeFi:</h3>
+<ul>
+<li><strong>DEX</strong> (Uniswap, PancakeSwap) — меняйте токены без регистрации</li>
+<li><strong>Кредитование</strong> (Aave, Compound) — кредиты под залог крипты</li>
+<li><strong>Стейблкоины</strong> (DAI, USDC) — защита от волатильности</li>
+<li><strong>Yield Farming</strong> — ликвидность пулам за % и комиссии</li>
+</ul>
+<h3>Преимущества:</h3>
+<ul>
+<li>✅ Доступность — нужен только интернет и кошелёк</li>
+<li>✅ Прозрачность — все операции видны в блокчейне</li>
+<li>✅ Высокая доходность — 5–20% на стейблкоинах</li>
+</ul>
+<h3>Риски:</h3>
+<ul>
+<li>❌ Смарт-контракты могут содержать уязвимости</li>
+<li>❌ Ошибочную транзакцию нельзя отменить</li>
+<li>❌ Газовые сборы Ethereum могут съесть прибыль</li>
+</ul>
+<h3>С чего начать:</h3>
+<ul>
+<li>Изучите основы — кошелёк, seed-фраза, газ</li>
+<li>Начните с $50–100 для экспериментов</li>
+<li>Используйте Arbitrum, Base, Polygon — низкие комиссии</li>
+<li>Выбирайте проверенные: Uniswap, Aave, Curve</li>
+</ul>
+<p><strong>Важно:</strong> DeFi — высокий риск. Регуляция отсутствует, защиты потребителей нет.</p>
+<div class="art-src">Источники: Asterium, Tinkoff Invest, vc.ru</div>`,
+  },
 ];
+
+let currentArticleIdx = 0;
+
+function renderNews() {
+  const now  = Date.now();
+  const grid = document.getElementById('newsGrid');
+  if (!grid) return;
+  grid.innerHTML = ARTICLES.map((a, i) => {
+    const msAgo = now - new Date(a.isoDate).getTime();
+    const isNew = msAgo >= 0 && msAgo < 7 * 24 * 3600 * 1000;
+    const badge = isNew
+      ? '<span class="news-badge news-badge-new">НОВОЕ</span>'
+      : `<span class="news-badge">${a.badge}</span>`;
+    return `<div class="news-card" onclick="openArticle(${i})">
+      <div class="news-meta">${badge}<span class="news-date">${a.date}</span></div>
+      <div class="news-title">${a.title}</div>
+      <p class="news-preview">${a.preview}</p>
+      <span class="news-read">Читать далее →</span>
+    </div>`;
+  }).join('');
+}
+
 function openArticle(i) {
   const a = ARTICLES[i]; if (!a) return;
-  document.getElementById('artDate').textContent = a.date;
+  currentArticleIdx = i;
+  document.getElementById('artDate').textContent  = a.date;
   document.getElementById('artTitle').textContent = a.title;
-  document.getElementById('artBody').innerHTML = a.body;
+  document.getElementById('artBody').innerHTML    = a.body;
+  updateArticleNav();
   document.getElementById('artModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
+function updateArticleNav() {
+  const prev = document.getElementById('artPrev');
+  const next = document.getElementById('artNext');
+  const ind  = document.getElementById('artIndicator');
+  if (prev) prev.disabled = currentArticleIdx === 0;
+  if (next) next.disabled = currentArticleIdx === ARTICLES.length - 1;
+  if (ind)  ind.textContent = `статья ${currentArticleIdx + 1} из ${ARTICLES.length}`;
+}
+
+function navigateArticle(dir) {
+  const idx = currentArticleIdx + dir;
+  if (idx < 0 || idx >= ARTICLES.length) return;
+  const body    = document.getElementById('artBody');
+  const animCls = dir > 0 ? 'art-body-slide-right' : 'art-body-slide-left';
+  body.classList.remove('art-body-slide-right', 'art-body-slide-left');
+  void body.offsetWidth;
+  currentArticleIdx = idx;
+  const a = ARTICLES[currentArticleIdx];
+  document.getElementById('artDate').textContent  = a.date;
+  document.getElementById('artTitle').textContent = a.title;
+  body.innerHTML = a.body;
+  body.classList.add(animCls);
+  updateArticleNav();
+}
+
 function closeArticle() {
   document.getElementById('artModal').classList.remove('open');
   document.body.style.overflow = '';
 }
 document.getElementById('artModalClose').addEventListener('click', closeArticle);
 document.getElementById('artModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeArticle(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeArticle(); } });
+document.getElementById('artPrev').addEventListener('click', () => navigateArticle(-1));
+document.getElementById('artNext').addEventListener('click', () => navigateArticle(1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeArticle(); }
+  if (document.getElementById('artModal').classList.contains('open')) {
+    if (e.key === 'ArrowLeft')  navigateArticle(-1);
+    if (e.key === 'ArrowRight') navigateArticle(1);
+  }
+});
 
 /* ══ INIT ══ */
 async function init() {
   loadCache();                                    // instant: cache or FALLBACK
-  renderCards(); renderTicker(); calcConv();      // paint immediately
+  renderCards(); renderTicker(); renderNews(); calcConv(); // paint immediately
 
   await loadPrices();                             // background fetch (parallel)
   saveCache();
