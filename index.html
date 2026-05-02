@@ -181,6 +181,31 @@
     .conv-card{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow)}
     .news-side{display:flex;flex-direction:column}
     .news-side .section-title{flex-shrink:0}
+    /* ── ANALYTICS ── */
+    .conv-analytics-wrap{display:grid;grid-template-columns:500px 1fr;gap:40px;align-items:start}
+    @media(max-width:1100px){.conv-analytics-wrap{grid-template-columns:1fr}}
+    .analytics-card{background:var(--surf);border:2px solid var(--accent);border-radius:16px;padding:28px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;min-height:300px}
+    .analytics-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .analytics-badge{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.8px;text-transform:uppercase}
+    .analytics-dt{font-size:12px;color:var(--text-3)}
+    .analytics-price-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+    .analytics-price{font-family:var(--h-font);font-size:32px;font-weight:800;color:var(--text);font-feature-settings:"tnum"}
+    .analytics-chg{font-size:15px;font-weight:700;padding:3px 10px;border-radius:7px}
+    .analytics-chg.up{color:var(--green);background:rgba(0,200,150,.12)}
+    .analytics-chg.down{color:var(--red);background:rgba(255,77,77,.12)}
+    .analytics-text{font-size:14px;color:var(--text-2);line-height:1.75;max-height:260px;overflow-y:auto;flex:1;padding-right:4px}
+    .analytics-text::-webkit-scrollbar{width:4px}
+    .analytics-text::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:2px}
+    .analytics-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--border);margin-top:auto}
+    .analytics-upd{font-size:12px;color:var(--text-3)}
+    .analytics-refresh{font-size:12px;font-weight:600;color:var(--accent);background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;transition:border-color .15s,background .15s}
+    .analytics-refresh:hover:not(:disabled){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+    .analytics-refresh:disabled{opacity:.4;cursor:default}
+    .analytics-error{font-size:13px;color:var(--text-2);text-align:center;padding:32px 0;line-height:1.6}
+    .analytics-skel{display:flex;flex-direction:column;gap:12px;flex:1}
+    .skel-line{border-radius:6px;background:var(--surf-2);animation:skel-pulse 1.6s ease-in-out infinite}
+    .skel-xs{height:12px;width:55%}.skel-s{height:12px;width:70%}.skel-m{height:12px;width:85%}.skel-l{height:12px;width:100%}.skel-price{height:38px;width:50%}
+    @keyframes skel-pulse{0%,100%{opacity:.35}50%{opacity:.9}}
 
     /* ── NEWS ── */
     .news-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
@@ -362,59 +387,101 @@
   <div class="small-row" id="smallRow"></div>
 </section>
 
-<!-- CONVERTER -->
+<!-- CONVERTER + ANALYTICS -->
 <section class="section" id="converter" style="padding-top:0">
-  <h2 class="section-title" style="margin-bottom:24px">Конвертер</h2>
-  <div class="conv-card" style="max-width:500px">
-    <div class="conv-row">
-      <span class="conv-lbl">Отдаю</span>
-      <div class="conv-field">
-        <img class="conv-icon" id="fromIcon" src="" alt="" />
-        <input class="conv-input" id="fromInput" type="number" placeholder="0" min="0" step="any" />
-        <div class="conv-sel-wrap">
-          <select id="fromSel">
-            <option value="BYN">BYN</option>
-            <option value="USD">USD</option>
-          </select>
-          <span class="conv-arr">▾</span>
+  <div class="conv-analytics-wrap">
+
+    <!-- Converter -->
+    <div>
+      <h2 class="section-title" style="margin-bottom:24px">Конвертер</h2>
+      <div class="conv-card">
+        <div class="conv-row">
+          <span class="conv-lbl">Отдаю</span>
+          <div class="conv-field">
+            <img class="conv-icon" id="fromIcon" src="" alt="" />
+            <input class="conv-input" id="fromInput" type="number" placeholder="0" min="0" step="any" />
+            <div class="conv-sel-wrap">
+              <select id="fromSel">
+                <option value="BYN">BYN</option>
+                <option value="USD">USD</option>
+              </select>
+              <span class="conv-arr">▾</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="swap-wrap">
+          <button class="swap-btn" id="swapBtn" title="Поменять местами">⇄</button>
+        </div>
+
+        <div class="conv-row">
+          <span class="conv-lbl">Получаю</span>
+          <div class="conv-field">
+            <img class="conv-icon" id="toIcon" src="" alt="" />
+            <input class="conv-input" id="toInput" type="number" placeholder="0" min="0" step="any" readonly />
+            <div class="conv-sel-wrap">
+              <select id="toSel">
+                <option value="BTC">BTC</option>
+                <option value="ETH">ETH</option>
+                <option value="SOL">SOL</option>
+                <option value="XRP">XRP</option>
+                <option value="BNB">BNB</option>
+                <option value="TON">TON</option>
+                <option value="HYPE">HYPE</option>
+                <option value="USDT">USDT</option>
+              </select>
+              <span class="conv-arr">▾</span>
+            </div>
+          </div>
+          <div class="conv-rate">
+            <span id="rateText">Введите сумму для расчёта</span>
+            <button class="rate-ref" id="rateRefresh" title="Обновить">↻</button>
+          </div>
+        </div>
+
+        <div class="buy-wrap">
+          <a class="buy-btn" id="buyBtn" href="https://exchange.whitebird.io/?refid=hTwY4wL8" target="_blank" rel="noopener">
+            Купить криптовалюту →
+          </a>
         </div>
       </div>
     </div>
 
-    <div class="swap-wrap">
-      <button class="swap-btn" id="swapBtn" title="Поменять местами">⇄</button>
-    </div>
-
-    <div class="conv-row">
-      <span class="conv-lbl">Получаю</span>
-      <div class="conv-field">
-        <img class="conv-icon" id="toIcon" src="" alt="" />
-        <input class="conv-input" id="toInput" type="number" placeholder="0" min="0" step="any" readonly />
-        <div class="conv-sel-wrap">
-          <select id="toSel">
-            <option value="BTC">BTC</option>
-            <option value="ETH">ETH</option>
-            <option value="SOL">SOL</option>
-            <option value="XRP">XRP</option>
-            <option value="BNB">BNB</option>
-            <option value="TON">TON</option>
-            <option value="HYPE">HYPE</option>
-            <option value="USDT">USDT</option>
-          </select>
-          <span class="conv-arr">▾</span>
+    <!-- Daily Analytics -->
+    <div>
+      <h2 class="section-title" style="margin-bottom:24px">Ежедневная аналитика</h2>
+      <div class="analytics-card" id="analyticsCard">
+        <!-- Skeleton loader -->
+        <div class="analytics-skel" id="analyticsSkel">
+          <div class="skel-line skel-xs"></div>
+          <div class="skel-line skel-price" style="margin:4px 0 8px"></div>
+          <div class="skel-line skel-l"></div>
+          <div class="skel-line skel-m"></div>
+          <div class="skel-line skel-l"></div>
+          <div class="skel-line skel-s"></div>
+          <div class="skel-line skel-m"></div>
         </div>
-      </div>
-      <div class="conv-rate">
-        <span id="rateText">Введите сумму для расчёта</span>
-        <button class="rate-ref" id="rateRefresh" title="Обновить">↻</button>
+        <!-- Content (hidden until loaded) -->
+        <div id="analyticsContent" style="display:none;flex-direction:column;gap:16px;flex:1">
+          <div class="analytics-hd">
+            <span class="analytics-badge">Утренняя сводка</span>
+            <span class="analytics-dt" id="analyticsDt"></span>
+          </div>
+          <div class="analytics-price-row">
+            <span class="analytics-price" id="analyticsPrice"></span>
+            <span class="analytics-chg" id="analyticsChg"></span>
+          </div>
+          <div class="analytics-text" id="analyticsText"></div>
+          <div class="analytics-footer">
+            <span class="analytics-upd" id="analyticsUpd"></span>
+            <button class="analytics-refresh" id="analyticsRefresh" style="display:none">↻ Обновить</button>
+          </div>
+        </div>
+        <!-- Error state -->
+        <div class="analytics-error" id="analyticsError" style="display:none"></div>
       </div>
     </div>
 
-    <div class="buy-wrap">
-      <a class="buy-btn" id="buyBtn" href="https://exchange.whitebird.io/?refid=hTwY4wL8" target="_blank" rel="noopener">
-        Купить криптовалюту →
-      </a>
-    </div>
   </div>
 </section>
 
@@ -1393,10 +1460,137 @@ document.addEventListener('keydown', e => {
   }
 });
 
+/* ══ ANALYTICS ══ */
+// ⚠️  API-ключ виден в исходном коде. Для продакшена — использовать прокси-сервер.
+// ⚠️  Anthropic API не поддерживает CORS из браузера. Если нужно, скажи — сделаем прокси на Cloudflare Workers.
+const CLAUDE_API_KEY  = 'ВСТАВЬ_API_КЛЮЧ_СЮДА';
+const ANALYTICS_SKEY  = 'mc_analytics_v2';
+
+function getAnalyticsCache() {
+  try {
+    const raw = localStorage.getItem(ANALYTICS_SKEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    if (d.date !== new Date().toDateString()) return null;
+    return d;
+  } catch { return null; }
+}
+
+function showAnalyticsSkel() {
+  document.getElementById('analyticsSkel').style.display    = '';
+  document.getElementById('analyticsContent').style.display = 'none';
+  document.getElementById('analyticsError').style.display   = 'none';
+}
+
+function showAnalyticsErr(msg) {
+  document.getElementById('analyticsSkel').style.display    = 'none';
+  document.getElementById('analyticsContent').style.display = 'none';
+  const el = document.getElementById('analyticsError');
+  el.style.display = '';
+  el.textContent   = msg;
+}
+
+function renderAnalytics(d) {
+  const cls = d.btcChange >= 0 ? 'up' : 'down';
+  const sgn = d.btcChange >= 0 ? '+' : '';
+  document.getElementById('analyticsDt').textContent  =
+    new Date(d.ts).toLocaleDateString('ru-RU', { day:'numeric', month:'long' }) + ', ' + d.generatedAt;
+  document.getElementById('analyticsPrice').textContent = '$' + d.btcPrice.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  const chgEl = document.getElementById('analyticsChg');
+  chgEl.textContent = sgn + d.btcChange.toFixed(2) + '% за 24ч';
+  chgEl.className   = 'analytics-chg ' + cls;
+  document.getElementById('analyticsText').textContent = d.text;
+  document.getElementById('analyticsUpd').textContent  = 'Обновлено в ' + d.generatedAt;
+  const btn = document.getElementById('analyticsRefresh');
+  btn.style.display = (Date.now() - d.ts > 3_600_000) ? '' : 'none';
+  document.getElementById('analyticsSkel').style.display    = 'none';
+  document.getElementById('analyticsError').style.display   = 'none';
+  document.getElementById('analyticsContent').style.display = 'flex';
+}
+
+async function generateAnalytics() {
+  showAnalyticsSkel();
+  const btn = document.getElementById('analyticsRefresh');
+  if (btn) { btn.disabled = true; btn.textContent = '↻ Генерирую…'; }
+  try {
+    const btcRes = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT');
+    if (!btcRes.ok) throw new Error('Binance API недоступен. Попробуйте позже.');
+    const b      = await btcRes.json();
+    const price  = parseFloat(b.lastPrice);
+    const change = parseFloat(b.priceChangePercent);
+
+    const prompt = `Ты — криптоаналитик для белорусской аудитории. Сегодня ${new Date().toLocaleDateString('ru-RU')}.
+
+ДАННЫЕ BITCOIN:
+Цена: $${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+Изменение 24ч: ${change >= 0 ? '+' : ''}${change.toFixed(2)}%
+Объём торгов: ${(parseFloat(b.volume) / 1000).toFixed(0)}K BTC за 24ч
+Максимум 24ч: $${parseFloat(b.highPrice).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+Минимум 24ч: $${parseFloat(b.lowPrice).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+
+Напиши краткую ежедневную сводку (200-250 слов):
+1. Что происходит с Bitcoin сегодня
+2. Движение цены — почему растёт/падает
+3. Макрофакторы (ФРС, инфляция, геополитика если актуально)
+4. Краткий прогноз на ближайшие дни
+
+СТИЛЬ: простым языком для новичков, конкретно, без "возможно/может быть", без эмодзи.
+Формат: чистый текст, короткие абзацы. Без заголовков и маркдауна.`;
+
+    const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type':      'application/json',
+        'x-api-key':         CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model:      'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages:   [{ role: 'user', content: prompt }],
+      }),
+    });
+
+    if (apiRes.status === 429) throw new Error('Лимит запросов исчерпан. Аналитика обновится завтра.');
+    if (!apiRes.ok)            throw new Error('Claude API недоступен. Попробуйте позже.');
+
+    const apiData = await apiRes.json();
+    const text    = apiData.content[0].text;
+    const record  = {
+      date:        new Date().toDateString(),
+      ts:          Date.now(),
+      btcPrice:    price,
+      btcChange:   change,
+      text,
+      generatedAt: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    };
+    localStorage.setItem(ANALYTICS_SKEY, JSON.stringify(record));
+    renderAnalytics(record);
+  } catch(e) {
+    showAnalyticsErr(e.message || 'Не удалось загрузить аналитику. Попробуйте позже.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '↻ Обновить'; }
+  }
+}
+
+function initAnalytics() {
+  const cached = getAnalyticsCache();
+  if (cached) {
+    renderAnalytics(cached);
+  } else {
+    generateAnalytics();
+  }
+  document.getElementById('analyticsRefresh').addEventListener('click', () => {
+    if (!confirm('Обновить аналитику? Это займёт ~20 секунд.')) return;
+    generateAnalytics();
+  });
+}
+
 /* ══ INIT ══ */
 async function init() {
   loadCache();                                    // instant: cache or FALLBACK
   renderCards(); renderTicker(); renderNews(); calcConv(); // paint immediately
+  initAnalytics();
 
   await loadPrices();                             // background fetch (parallel)
   saveCache();
